@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p><input type="checkbox" id="light"></p>
+<script src="/public/socket.io.js"></script>
+<script type="text/javascript" src="/public/smoothie.js"></script>
+<script src="/reload/reload.js"></script>
+<!--script src="/public/serialport.js"></script-->
+
+<!--script src="https://code.jquery.com/jquery-1.10.2.js"></script-->
+<script>
+var socket = io(); //load socket.io-client and connect to the host that serves the page
+window.addEventListener("load", function(){ //when page loads
+  var lightbox = document.getElementById("light");
+  lightbox.addEventListener("change", function() { //add event listener for when checkbox changes
+    socket.emit("light", Number(this.checked)); //send button status to server (as 1 or 0)
+  });
+});
+//socket.on('light', function (data) { //get button status from client
+//  document.getElementById("light").checked = data; //change checkbox according to push button on Raspberry Pi
+//  socket.emit("light", data); //send push button status to back to server
+//});
+</script>
+
+<canvas id="mycanvas" width="400" height="200"></canvas>
+<script type="text/javascript">
+
+  // Random data
+  var line1 = new TimeSeries();
+  setInterval(function() {
+    //line1.append(new Date().getTime(), Math.random());
+    audio_array = new Array(5).fill(0); //**globally declared array to be appended after each iteration s
+    var avg = 0; //**globally declared avg to be replaced every
+    var cnt = 0;
+    var total = 0;
+      socket.on('audio_stream', function(data)
+      {
+        audio_stream = data
+      })
+    //console.log(avg);
+    line1.append(new Date().getTime(), audio_stream );
+  }, 50);
+
+  var smoothie = new SmoothieChart({
+    millisPerPixel:79,
+    //maxValueScale:1.0,minValueScale:1.0,
+    maxValue:50,minValue:0,
+    maxValueScale:1.5,minValueScale:1.02,
+    grid: { strokeStyle: 'rgb(125, 0, 0)', fillStyle: 'rgb(60, 0, 0)', lineWidth: 1, millisPerLine: 250}
+  }); // end chart customizing
+  smoothie.addTimeSeries(line1, { strokeStyle: 'rgb(0, 255, 0)', fillStyle: 'rgba(0, 255, 0, 0.4)', lineWidth: 3 });
+
+  smoothie.streamTo(document.getElementById("mycanvas"), 500);
+</script>
+<br>
+
+
+
+<!--- *********************** -->
+
+
+<canvas id="mycanvas2" width="400" height="200"></canvas>
+<script type="text/javascript">
+
+  // Random data
+  var line2 = new TimeSeries();
+  setInterval(function() {
+    //line1.append(new Date().getTime(), Math.random());
+    socket.on('dtmf_HL', function(data){
+      dtmf_enable = data
+      //console.log(serial_stream)
+    })
+    line2.append(new Date().getTime(), dtmf_enable );
+  }, 50);
+
+  var smoothie = new SmoothieChart({
+    millisPerPixel:79,
+    //maxValueScale:1.0,minValueScale:1.0,
+    maxValueScale:1.5,minValueScale:1.02,
+    grid: { strokeStyle: 'rgb(125, 0, 0)', fillStyle: 'rgb(60, 0, 0)', lineWidth: 1, millisPerLine: 250}
+  }); // end chart customizing
+  smoothie.addTimeSeries(line2, { strokeStyle: 'rgb(255, 0, 255)', fillStyle: 'rgba(255, 0, 255, 0.3)', lineWidth: 3 });
+
+  smoothie.streamTo(document.getElementById("mycanvas2"), 500);
+</script>
+<br>
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+
+</script>
+
+
+</html>
+</body>
+</html>
