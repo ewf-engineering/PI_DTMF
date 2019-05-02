@@ -1,0 +1,43 @@
+$ sudo apt-get install build-essential
+$ sudo apt-get install arduino arduino-core arduino-mk
+$ mkdir blink1
+$ cd blink1
+nano blink.ino
+//<< add the following to the made file >>
+#define LED_PIN 13
+
+void setup()
+{
+	pinMode(LED_PIN, OUTPUT);
+}
+
+void loop()
+{
+	digitalWrite(LED_PIN, HIGH);
+	delay(100);
+	digitalWrite(LED_PIN, LOW);
+	delay(900);
+}
+ctrl +x (Y)
+
+nano Makefile
+ARDUINO_DIR  = /usr/share/arduino
+#ARDUINO_LIBS = Ethernet Ethernet/utility SPI
+BOARD_TAG    = uno
+ARDUINO_PORT = /dev/ttyACM0
+
+include /usr/share/arduino/Arduino.mk
+
+ctrl +x (Y)
+
+$ make
+$ sudo make upload
+
+if problem with location:
+$ dmesg tail
+plug and unplug and run and figure out where it is
+or
+$ls /dev/ttyACM*
+
+arduino should BLINK!!!
+yay!! :) 
